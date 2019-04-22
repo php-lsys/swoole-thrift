@@ -1,0 +1,22 @@
+{
+	"name": "lsys/swoole-thrift",
+	"type" : "library",
+	"license": "Apache-2.0",
+	"version" : "2.0.3",
+	"description" : "lsys module swoole thrift rpc server and client",
+	"require" : {
+		"lsys/swoole" : "~2.0.0",
+		"apache/thrift": "^0.11.0"
+	},
+	"require-dev" : {
+		"eaglewu/swoole-ide-helper" : "dev-master"
+	},
+	"suggest": {
+		"ext-swoole" : "~4.0.0"
+    },
+	"autoload" : {
+		"psr-4" : {
+			"LSYS\\Swoole\\Thrift\\" : "src/classes/LSYS/Swoole/Thrift/"
+		}
+	}
+}
