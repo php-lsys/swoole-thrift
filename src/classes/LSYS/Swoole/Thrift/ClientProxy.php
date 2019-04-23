@@ -84,7 +84,7 @@ class ClientProxy{
      * 清理后本对象将不在可用
      */
     public function release(){
-        @$this->protocol->getTransport()->close();
+		if(is_object($this->protocol))@$this->protocol->getTransport()->close();
         $this->protocol=null;
         $this->client=null;
     }
