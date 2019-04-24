@@ -1,9 +1,9 @@
 <?php
 use Thrift\Transport\TSocket;
-use Information\NewsClient;
+use DomeInformation\DomeNewsClient;
 use Thrift\Transport\TFramedTransport;
 use Thrift\Protocol\TJSONProtocol;
-use Information\AdParam;
+use DomeInformation\DomeAdParam;
 require __DIR__."/boot.php";
 
 
@@ -16,7 +16,7 @@ $transport = new TFramedTransport($socket);
 $protocol = new TJSONProtocol($transport);
 
 
-$client = new NewsClient($protocol);
+$client = new DomeNewsClient($protocol);
 $transport->open();
 
 //同步方式进行交互

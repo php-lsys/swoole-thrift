@@ -40,26 +40,32 @@ class ClientProxy{
         $transport=new TFramedTransport($socket);
         return new static($transport, $client);
     }
+    /**
+     * @var Config
+     */
+    protected $config;
     protected $client;
     protected $protocol;
     /**
      * 客户端代理类
      * 代理转发目的:实现在请求前后的一些统一的辅助操作
-     * @param TTransport $transport
-     * @param string $client
-     * @param callable $protocol
+     * @param Config $config 当前客户端使用的配置文件,一般继承重写会用到
+     * @param TTransport $transport 传输对象
+     * @param string $client_creater 客户端创建回调行数或客户端类名
+     * @param callable $protocol 协议创建回调函数 返回协议对象
      */
-    public function __construct(TTransport $transport,$client,callable $protocol=null) {
+    public function __construct(Config $config,TTransport $transport,$client_creater,callable $protocol=null) {
+        $this->config=$config;
         if(is_callable($protocol)){
             $protocol=call_user_func($transport);
             assert($protocol instanceof TProtocol);
         }else{
             $protocol=new TBinaryProtocolAccelerated($transport);
         }
-        if (is_callable($client)) {
-            $this->client=call_user_func($client,$protocol);
+        if (is_callable($client_creater)) {
+            $this->client=call_user_func($client_creater,$protocol);
         }else{
-            $this->client=(new \ReflectionClass($client))->newInstance($protocol);
+            $this->client=(new \ReflectionClass($client_creater))->newInstance($protocol);
         }
         $this->protocol=$protocol;
     }
@@ -90,6 +96,7 @@ class ClientProxy{
     }
     /**
      * 代理实现
+     * 如果要自动附带参数,请重写此方法
      * @param string $method
      * @param array $param_arr
      * @return mixed

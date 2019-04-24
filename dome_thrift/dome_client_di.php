@@ -1,8 +1,8 @@
 <?php
-use Information\ProductClient;
+use DomeInformation\DomeNewsClient;
 use LSYS\Swoole\Thrift\ClientProxy;
 /**
- * @method ProductClient|ClientProxy product(ClientProxy $client=null,$config=null)
+ * @method DomeNewsClient|ClientProxy news(ClientProxy $client=null,$config=null)
  */
 class MyClient extends \LSYS\DI{
     /**
@@ -15,7 +15,7 @@ class MyClient extends \LSYS\DI{
      */
     public static function get(){
         $di=parent::get();
-        !isset($di->product)&&$di->product(new \LSYS\DI\MethodCallback(ClientProxy::diMethod(self::$config,ProductClient::class)));
+        !isset($di->news)&&$di->news(new \LSYS\DI\MethodCallback(ClientProxy::diMethod(self::$config,DomeNewsClient::class)));
         return $di;
     }
 }

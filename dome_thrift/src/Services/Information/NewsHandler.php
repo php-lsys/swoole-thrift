@@ -1,26 +1,26 @@
 <?php
 namespace Services\Information;
-use Information\AdParam;
-use Information\NewsIf;
-class NewsHandler implements NewsIf {
+use DomeInformation\DomeAdParam;
+use DomeInformation\DomeNewsIf;
+class NewsHandler implements DomeNewsIf {
     public function test($test){
         return "return:".$test;
     }
-    public function ad_lists(AdParam $param)
+    public function ad_lists(DomeAdParam $param)
     {
         $data=[
-            new \Information\AdItem(
+            new \DomeInformation\DomeAdItem(
                 [
                     'title'=>"fasdfa",
                     'img'=>"img",
                 ]
                 ),
         ];
-        return new \Information\ResultAd(array(
+        return new \DomeInformation\DomeResultAd(array(
             'Status'=>true,
             'Data'=>$data,
             'Message'=>"message",
-            'Page'=>new \Shared\ResultPage(array(
+            'Page'=>new \DomeShared\DomeResultPage(array(
                 'page'=>1
             )),
         ));

@@ -1,8 +1,8 @@
 <?php
-use Information\NewsProcessor;
+use DomeInformation\DomeNewsProcessor;
 use Thrift\Factory\TJSONProtocolFactory;
 use LSYS\Loger\Handler\Stdout;
-use Information\NewsIf;
+use DomeInformation\DomeNewsIf;
 require __DIR__."/boot.php";
 
 LSYS\Loger\DI::get()->loger()->addHandler(new Stdout());
@@ -10,7 +10,7 @@ LSYS\Loger\DI::get()->loger()->addHandler(new Stdout());
 //这个一般放到你框架代码,具体你用什么框架,可自行决定
 class DomeHandlerProxy{
     protected $_if;
-    public function __construct(NewsIf $newif) {
+    public function __construct(DomeNewsIf $newif) {
         $this->_if=$newif;
     }
     public function __call($method,$args){
@@ -25,7 +25,7 @@ class DomeHandlerProxy{
 
 
 $handler = new \Services\Information\NewsHandler();
-$processor = new NewsProcessor(new DomeHandlerProxy($handler));
+$processor = new DomeNewsProcessor(new DomeHandlerProxy($handler));
 
 
 $swoole = new \Swoole\Server('0.0.0.0', 8099);

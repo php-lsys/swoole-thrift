@@ -1,5 +1,5 @@
 <?php
-use Information\NewsClient;
+use DomeInformation\DomeNewsClient;
 use Thrift\Protocol\TJSONProtocol;
 require __DIR__."/boot.php";
 
@@ -12,7 +12,7 @@ go(function () {
     //协议要跟服务器对上
     $res=$client_pool->query($connect, function()use($connect){
         $protocol = new TJSONProtocol($connect->transport());
-        $client = new NewsClient($protocol);
+        $client = new DomeNewsClient($protocol);
         $res=$client->test("fdasdfaddd");
         return $res;
     });
