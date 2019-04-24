@@ -41,7 +41,8 @@ class ClientProxy{
         return new static($config,$transport, $client);
     }
     /**
-     * @var Config
+	 * 使用到的配置详细
+     * @var array
      */
     protected $config;
     protected $client;
@@ -54,7 +55,7 @@ class ClientProxy{
      * @param string $client_creater 客户端创建回调行数或客户端类名
      * @param callable $protocol 协议创建回调函数 返回协议对象
      */
-    public function __construct(Config $config,TTransport $transport,$client_creater,callable $protocol=null) {
+    public function __construct(array $config,TTransport $transport,$client_creater,callable $protocol=null) {
         $this->config=$config;
         if(is_callable($protocol)){
             $protocol=call_user_func($transport);
