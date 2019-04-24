@@ -18,7 +18,7 @@ class ClientProxy{
         return function(ClientProxy $client_proxy=null,$config_name=null)use($client,$default_config_name){
             $config=\LSYS\Config\DI::get()->config($config_name?$config_name:$default_config_name);
             if ($client_proxy) {
-                return new static($client_proxy->getProtocol()->getTransport(),$client);
+                return new static($config,$client_proxy->getProtocol()->getTransport(),$client);
             }
             return static::create($client, $config);
         };
@@ -38,7 +38,7 @@ class ClientProxy{
         );
         $socket=(new \ReflectionClass($config['socket']))->newInstanceArgs($config['args']);
         $transport=new TFramedTransport($socket);
-        return new static($transport, $client);
+        return new static($config,$transport, $client);
     }
     /**
      * @var Config
