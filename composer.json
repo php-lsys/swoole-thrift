@@ -5,6 +5,7 @@
 	"version" : "2.0.7",
 	"description" : "lsys module swoole thrift rpc server and client",
 	"require" : {
+		"lsys/event" : "~2.0.1",
 		"lsys/swoole" : "~2.0.0",
 		"apache/thrift": "^0.11.0"
 	},

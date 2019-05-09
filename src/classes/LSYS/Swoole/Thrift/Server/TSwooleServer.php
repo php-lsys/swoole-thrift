@@ -2,10 +2,7 @@
 namespace LSYS\Swoole\Thrift\Server;
 use Thrift\Factory\TTransportFactory;
 use Thrift\Factory\TProtocolFactory;
-use Thrift\Exception\TException;
-use Thrift\Exception\TApplicationException;
-use Thrift\Type\TMessageType;
-use Thrift\Type\TType;
+use LSYS\Swoole\Thrift\Server\SwooleObserver\ReceiveObserver;
 /**
  * Simple implemtation of a Thrift server.
  *
@@ -43,7 +40,10 @@ class TSwooleServer
      * @var TProtocolFactory
      */
     protected $outputProtocolFactory_;
-    
+    /**
+     * @var SwooleEventManager
+     */
+    protected $event_manager;
     /**
      * Sets up all the factories, etc
      *
@@ -58,15 +58,52 @@ class TSwooleServer
     public function __construct($processor,
         \Swoole\Server $server,
         TProtocolFactory $inputProtocolFactory,
-        TProtocolFactory $outputProtocolFactory) {
+        TProtocolFactory $outputProtocolFactory,
+        SwooleEventManager $event_manager=null) {
             $this->processor_ = $processor;
             $this->server_ = $server;
             $this->inputProtocolFactory_ = $inputProtocolFactory;
             $this->outputProtocolFactory_ = $outputProtocolFactory;
+            if(is_null($event_manager)) $event_manager=new SwooleEventManager();
+            $this->event_manager=$event_manager;
+            if(!in_array(SwooleEvent::Receive,$event_manager->swooleEvent())){
+                $event_manager->attach((new SwooleSubject(SwooleEvent::Receive))->attach(new ReceiveObserver()));
+            }
     }
-    function config(array $config){
+    /**
+     * get or set config
+     * @param array $config
+     * @return string[]|\LSYS\Swoole\Thrift\Server\TSwooleServer
+     */
+    public function config(array $config=null){
+        if(is_null($config))return $this->config;
         $this->config=array_merge($this->config,$config);
         return $this;
+    }
+    /**
+     * get swoole object
+     * @return \Swoole\Server
+     */
+    public function swooleServer() {
+        return $this->server_;
+    }
+    /**
+     * @return \Thrift\Factory\TProtocolFactory
+     */
+    public function inputProtocolFactory() {
+        return $this->inputProtocolFactory_;
+    }
+    /**
+     * @return object
+     */
+    public function processor() {
+        return $this->processor_;
+    }
+    /**
+     * @return \Thrift\Factory\TProtocolFactory
+     */
+    public function outputProtocolFactory() {
+        return $this->outputProtocolFactory_;
     }
     /**
      * Serves the server. This should never return
@@ -74,53 +111,19 @@ class TSwooleServer
      * is interrupted intentionally
      */
     public function serve(){
-        $this->server_->on('receive', [$this, 'onReceive']);
+        foreach ($this->event_manager->swooleEvent() as $event) {
+            $this->server_->on($event,function()use($event){
+                $this->event_manager->dispatch(new SwooleEvent($this,$event,func_get_args()));
+            });
+        }
         $this->server_->set($this->config+(array)$this->server_->setting);
         return $this->server_->start();
     }
     /**
      * Stops the server serving
-     *
-     * @abstract
      * @return void
      */
     public function stop(){
         $this->server_->shutdown();
-    }
-    public function onReceive($serv, $fd, $from_id, $data)
-    {
-        $transport=new TSwooleFramedTransport();
-        $transport->setHandle($fd);
-        $transport->buffer = $data;
-        $transport->server = $serv;
-        $inputProtocol = $this->inputProtocolFactory_->getProtocol($transport);
-        $outputProtocol = $this->outputProtocolFactory_->getProtocol($transport);
-        try {
-            $this->processor_->process($inputProtocol, $outputProtocol);
-        } catch (\Exception $e) {
-            $rseqid=0;
-            $fname=null;
-            $trace=$e->getTrace();
-            if(is_array($trace)){
-                array_pop($trace);
-                $trace=array_pop($trace);
-                if(strpos($trace['function'], 'process_')===0){
-                    $fname=substr($trace['function'], 8);
-                    $rseqid=array_shift($trace['args']);
-                }
-            }
-            if(!$e instanceof TException||!method_exists($e, "write")){
-                \LSYS\Loger\DI::get()->loger()->add(\LSYS\Loger::ERROR,$e);
-                $message=$e->getMessage().":".$e->getCode();
-                if(\LSYS\Core::$environment!=\LSYS\Core::PRODUCT&&method_exists($e, "getTraceAsString")){
-                    $message.="\n".$e->getTraceAsString();//非线上环境 把堆栈输出,方便调试
-                }
-                $e = new TApplicationException($message, TApplicationException::UNKNOWN);
-            }
-            $outputProtocol->writeMessageBegin($fname, TMessageType::EXCEPTION, $rseqid);
-            $e->write($outputProtocol);
-            $outputProtocol->writeMessageEnd();
-            $outputProtocol->getTransport()->flush();
-        }
     }
 }
