@@ -3,7 +3,22 @@ namespace LSYS\Swoole\Thrift\Server;
 use LSYS\EventManager\Event;
 class SwooleEvent extends Event
 {
-    const Receive="receive";
+    //SWOOLE 事件列表 $swoole_event 变量得取值
+    const Start="Start";
+    const Shutdown="Shutdown";
+    const WorkerStart="WorkerStart";
+    const WorkerStop="WorkerStop";
+    const WorkerExit="WorkerExit";
+    const Connect="Connect";
+    const Receive="Receive";
+    const Packet="Packet";
+    const Close="Close";
+    const Task="Task";
+    const Finish="Finish";
+    const PipeMessage="PipeMessage";
+    const WorkerError="WorkerError";
+    const ManagerStart="ManagerStart";
+    const ManagerStop="ManagerStop";
     protected $server;
     protected $swoole_event;
     protected $args;
