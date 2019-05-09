@@ -43,7 +43,7 @@ class TSwooleServer
     /**
      * @var SwooleEventManager
      */
-    protected $event_manager;
+    protected $eventManager_;
     /**
      * Sets up all the factories, etc
      *
@@ -65,7 +65,7 @@ class TSwooleServer
             $this->inputProtocolFactory_ = $inputProtocolFactory;
             $this->outputProtocolFactory_ = $outputProtocolFactory;
             if(is_null($event_manager)) $event_manager=new SwooleEventManager();
-            $this->event_manager=$event_manager;
+            $this->eventManager_=$event_manager;
             if(!in_array(SwooleEvent::Receive,$event_manager->swooleEvent())){
                 $event_manager->attach((new SwooleSubject(SwooleEvent::Receive))->attach(new ReceiveObserver()));
             }
@@ -79,6 +79,12 @@ class TSwooleServer
         if(is_null($config))return $this->config;
         $this->config=array_merge($this->config,$config);
         return $this;
+    }
+    /**
+     * @return \LSYS\Swoole\Thrift\Server\SwooleEventManager
+     */
+    public function eventManager() {
+        return $this->eventManager_;
     }
     /**
      * get swoole object
@@ -111,9 +117,9 @@ class TSwooleServer
      * is interrupted intentionally
      */
     public function serve(){
-        foreach ($this->event_manager->swooleEvent() as $event) {
+        foreach ($this->eventManager_->swooleEvent() as $event) {
             $this->server_->on($event,function()use($event){
-                $this->event_manager->dispatch(new SwooleEvent($this,$event,func_get_args()));
+                $this->eventManager_->dispatch(new SwooleEvent($this,$event,func_get_args()));
             });
         }
         $this->server_->set($this->config+(array)$this->server_->setting);

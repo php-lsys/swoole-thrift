@@ -10,16 +10,19 @@ class SwooleEvent extends Event
     public function __construct(TSwooleServer $server,$swoole_event,$args) {
         $this->server=$server;
         $this->swoole_event=$swoole_event;
-        $this->args;
+        $this->args=$args;
     }
     public function swooleServer(){
         return $this->server;
     }
-    public function swooleEevent(){
+    public function swooleEvent(){
         return $this->swoole_event;
     }
+    /**
+     * @return array
+     */
     public function eventArgs(){
-        return $this->args;
+        return is_array($this->args)?$this->args:[];
     }
     public function exec(callable $callback) {
         return call_user_func_array($callback, $this->args);
