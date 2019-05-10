@@ -39,7 +39,4 @@ class SwooleEvent extends Event
     public function eventArgs(){
         return is_array($this->args)?$this->args:[];
     }
-    public function exec(callable $callback) {
-        return call_user_func_array($callback, $this->args);
-    }
 }
