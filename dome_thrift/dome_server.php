@@ -24,7 +24,7 @@ class DomeHandlerProxy{
 }
 
 
-$handler = new \Services\Information\NewsHandler();
+$handler = new \Services\Information\DomeNewsHandler();
 $processor = new DomeNewsProcessor(new DomeHandlerProxy($handler));
 
 
