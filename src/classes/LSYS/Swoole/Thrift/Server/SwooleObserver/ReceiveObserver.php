@@ -17,7 +17,7 @@ class ReceiveObserver implements \SplObserver
 	 * @param SwooleSubject $subject 
 	 * @return void 
 	 */
-    public function update($subject)
+    public function update(\SplSubject $subject)
     {
         $this->subject=$subject;
         call_user_func_array([$this,'onReceive'], $subject->event()->eventArgs());
