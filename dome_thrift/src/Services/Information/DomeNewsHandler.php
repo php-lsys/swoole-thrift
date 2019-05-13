@@ -2,7 +2,7 @@
 namespace Services\Information;
 use DomeInformation\DomeAdParam;
 use DomeInformation\DomeNewsIf;
-class NewsHandler implements DomeNewsIf {
+class DomeNewsHandler implements DomeNewsIf {
     public function test($test){
         return "return:".$test;
     }
