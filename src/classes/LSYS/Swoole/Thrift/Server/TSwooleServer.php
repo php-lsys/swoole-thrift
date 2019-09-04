@@ -7,7 +7,9 @@
 namespace LSYS\Swoole\Thrift\Server;
 use Thrift\Factory\TTransportFactory;
 use Thrift\Factory\TProtocolFactory;
-use LSYS\Swoole\Thrift\Server\SwooleObserver\ReceiveObserver;
+use LSYS\EventManager;
+use LSYS\Swoole\Thrift\Server\EventManager\SwooleEvent;
+use LSYS\Swoole\Thrift\Server\EventManager\ReceiveObserver;
 /**
  * Simple implemtation of a Thrift server.
  *
@@ -46,7 +48,7 @@ class TSwooleServer
      */
     protected $outputProtocolFactory_;
     /**
-     * @var SwooleEventManager
+     * @var EventManager
      */
     protected $eventManager_;
     /**
@@ -64,16 +66,14 @@ class TSwooleServer
         \Swoole\Server $server,
         TProtocolFactory $inputProtocolFactory,
         TProtocolFactory $outputProtocolFactory,
-        SwooleEventManager $event_manager=null) {
+        EventManager $event_manager=null) {
             $this->processor_ = $processor;
             $this->server_ = $server;
             $this->inputProtocolFactory_ = $inputProtocolFactory;
             $this->outputProtocolFactory_ = $outputProtocolFactory;
-            if(is_null($event_manager)) $event_manager=new SwooleEventManager();
+            if(is_null($event_manager)) $event_manager=\LSYS\EventManager\DI::get()->eventManager();
             $this->eventManager_=$event_manager;
-            if(!in_array(SwooleEvent::Receive,$event_manager->swooleEvent())){
-                $event_manager->attach((new SwooleSubject(SwooleEvent::Receive))->attach(new ReceiveObserver()));
-            }
+            $event_manager->attach(new ReceiveObserver());
     }
     /**
      * get or set config
@@ -86,7 +86,7 @@ class TSwooleServer
         return $this;
     }
     /**
-     * @return \LSYS\Swoole\Thrift\Server\SwooleEventManager
+     * @return \LSYS\EventManager
      */
     public function eventManager() {
         return $this->eventManager_;
@@ -122,7 +122,7 @@ class TSwooleServer
      * is interrupted intentionally
      */
     public function serve(){
-        foreach ($this->eventManager_->swooleEvent() as $event) {
+        foreach ($this->eventManager_->getAttachEvent() as $event) {
             $this->server_->on($event,function()use($event){
                 $this->eventManager_->dispatch(new SwooleEvent($this,$event,func_get_args()));
             });
