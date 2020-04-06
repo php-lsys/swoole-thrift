@@ -4,8 +4,8 @@
 	"license": "Apache-2.0",
 	"description" : "lsys module swoole thrift rpc server and client",
 	"require" : {
-		"lsys/event" : "~0.0.0",
-		"lsys/swoole" : "~0.0.0",
+		"lsys/event" : "~0.0.1",
+		"lsys/swoole" : "~0.0.1",
 		"apache/thrift": "^0.11.0"
 	},
 	"require-dev" : {
