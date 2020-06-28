@@ -8,25 +8,25 @@ namespace LSYS\Swoole\Thrift\Tools;
 abstract class TableThriftBuild{
     private $_dir;
     private $_namespace;
-    public function __construct($dir){
+    public function __construct(string $dir){
         $this->setSaveDir($dir);
     }
-    public function tablePrefix(){
+    public function tablePrefix():string{
         return "";
     }
-    public function message($table,$msg){}
+    public function message(string $table,string $msg){}
     /**
      * 设置保存目录
      * @param string $dir
      * @return \LSYS\Model\Tools\TraitBuild
      */
-    public function setSaveDir($dir){
+    public function setSaveDir(string $dir){
         $this->_dir=$dir;
         return $this;
     }
     /**
      * 设置命名空间
-     * @param string $namespace
+     * @param string[] $namespace
      * @return \LSYS\Model\Tools\TraitBuild
      */
     public function setNamespace(array $namespace){
@@ -38,7 +38,7 @@ abstract class TableThriftBuild{
      * @param string $table
      * @return string
      */
-    protected function fileName(){
+    protected function fileName():string{
         return "table";
     }
     /**
@@ -46,7 +46,7 @@ abstract class TableThriftBuild{
      * @param string $table
      * @return string
      */
-    protected function ThriftName($table){
+    protected function ThriftName(string $table):string{
         return str_replace(" ",'',ucwords(str_replace("_",' ', $table)));
     }
     /**
@@ -55,7 +55,7 @@ abstract class TableThriftBuild{
      * @param bool $is_null
      * @return bool
      */
-    protected function ColumnOptional($column,$is_null){
+    protected function ColumnOptional(string $column,bool $is_null):bool{
         return $is_null;
     }
     /**
@@ -63,7 +63,7 @@ abstract class TableThriftBuild{
      * @param string $column
      * @return string
      */
-    protected function ColumnName($column){
+    protected function ColumnName(string $column):string{
         return $column;
     }
     /**
@@ -72,7 +72,7 @@ abstract class TableThriftBuild{
      * @param string $type
      * @return string
      */
-    protected function ColumnType($column,$type){
+    protected function ColumnType(string $column,string $type):string{
         $type=strtolower($type);
 //         bool: A boolean value (true or false)
 //         byte: An 8-bit signed integer
@@ -106,7 +106,7 @@ abstract class TableThriftBuild{
         }
         return "string";
     }
-    private function createColumn($columnset) {
+    private function createColumn(array $columnset):string{
         $column=[];
         $i=1;
         foreach ($columnset as $v){
@@ -133,7 +133,7 @@ abstract class TableThriftBuild{
      * 创建代码
      * @throws \Exception
      */
-    public function build(){
+    public function build():void{
         $class_dir=rtrim($this->_dir,"\/")."/";
         if(!is_dir($class_dir)){
             throw new \Exception(strtr("dir [:dir] does not exist.", array(":dir"=>$class_dir)));
@@ -176,10 +176,10 @@ abstract class TableThriftBuild{
      * 表列表
      * @return string[]
      */
-    abstract function listTables();
+    abstract function listTables():array;
     /**
      * 返回为:字段名 类型 是否为空 注释
      * @return [$name,$type,$is_null,$commect][]
      */
-    abstract function listColumns($table);
+    abstract function listColumns($table):array;
 }

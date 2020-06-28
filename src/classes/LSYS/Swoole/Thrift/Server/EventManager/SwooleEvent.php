@@ -25,7 +25,7 @@ class SwooleEvent extends Event
     const ManagerStart="ManagerStart";
     const ManagerStop="ManagerStop";
     protected $server;
-    public function __construct(TSwooleServer $server,$name,$data) {
+    public function __construct(TSwooleServer $server,string $name,$data) {
         $this->server=$server;
         parent::__construct($name,$data);
     }

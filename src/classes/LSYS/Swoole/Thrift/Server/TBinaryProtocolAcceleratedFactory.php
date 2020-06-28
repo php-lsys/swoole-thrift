@@ -11,7 +11,7 @@ class TBinaryProtocolAcceleratedFactory implements TProtocolFactory
 {
     private $strictRead_ = false;
     private $strictWrite_ = false;
-    public function __construct($strictRead=false, $strictWrite=false)
+    public function __construct(bool $strictRead=false, bool $strictWrite=false)
     {
         $this->strictRead_ = $strictRead;
         $this->strictWrite_ = $strictWrite;

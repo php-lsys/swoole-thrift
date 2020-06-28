@@ -45,14 +45,13 @@ class TSwooleSocketPool extends TTransport
   /**
    * Socket constructor
    *
-   * @param string $host         Remote hostname
-   * @param int    $port         Remote port
-   * @param bool   $persist      Whether to use a persistent socket
+   * @param string $config      
+   * @param string    $node   
    * @param string $debugHandler Function to call for error logging
    */
   public function __construct(
-        $config,
-        $node,
+        string $config,
+        string $node,
         $debugHandler=null
   ){
         $this->pool_ = \LSYS\Swoole\Coroutine\ClientPool\DI::get()->swoole_client_pool($config);
@@ -72,7 +71,7 @@ class TSwooleSocketPool extends TTransport
    *
    * @param bool $debug
    */
-  public function setDebug($debug)
+  public function setDebug(bool $debug)
   {
     $this->debug_ = $debug;
   }

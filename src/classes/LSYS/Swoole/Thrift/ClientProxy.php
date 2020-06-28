@@ -15,11 +15,11 @@ class ClientProxy{
     /**
      * 创建LSYS\DI\MethodCallback的回调函数辅助方法
      * DI示例:new \LSYS\DI\MethodCallback(ClientProxy::diMethod(self::$config,ProductClient::class))
-     * @param string $client 客户端类名
      * @param string $default_config_name 默认config名
+     * @param string|callable $client 客户端类名
      * @return object 返回对应客户端代理实例
      */
-    public static function diMethod($default_config_name,$client){
+    public static function diMethod(string $default_config_name,$client){
         return function(ClientProxy $client_proxy=null,$config_name=null)use($client,$default_config_name){
             $config=\LSYS\Config\DI::get()->config($config_name?$config_name:$default_config_name);
             if ($client_proxy) {
@@ -30,7 +30,7 @@ class ClientProxy{
     }
     /**
      * 根据配置创建对应的客户端代理辅助方法
-     * @param string $client
+     * @param string|callable $client
      * @param Config $config
      * @return static
      */
@@ -57,7 +57,7 @@ class ClientProxy{
      * 代理转发目的:实现在请求前后的一些统一的辅助操作
      * @param Config $config 当前客户端使用的配置文件,一般继承重写会用到
      * @param TTransport $transport 传输对象
-     * @param string $client_creater 客户端创建回调行数或客户端类名
+     * @param string|callable $client_creater 客户端创建回调行数或客户端类名
      * @param callable $protocol 协议创建回调函数 返回协议对象
      */
     public function __construct(array $config,TTransport $transport,$client_creater,callable $protocol=null) {
@@ -95,7 +95,7 @@ class ClientProxy{
      * 否则请手动手动清理
      * 清理后本对象将不在可用
      */
-    public function release(){
+    public function release():void{
 		if(is_object($this->protocol))@$this->protocol->getTransport()->close();
         $this->protocol=null;
         $this->client=null;
@@ -107,7 +107,7 @@ class ClientProxy{
      * @param array $param_arr
      * @return mixed
      */
-    public function __call($method,$param_arr) {
+    public function __call(string $method,$param_arr) {
         if (!$this->protocol->getTransport()->isOpen()) {
             $this->protocol->getTransport()->open();
         }
