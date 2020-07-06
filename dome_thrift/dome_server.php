@@ -3,6 +3,7 @@ use DomeInformation\DomeNewsProcessor;
 use Thrift\Factory\TJSONProtocolFactory;
 use LSYS\Loger\Handler\Stdout;
 use DomeInformation\DomeNewsIf;
+use Thrift\Factory\TBinaryProtocolFactory;
 require __DIR__."/boot.php";
 
 LSYS\Loger\DI::get()->loger()->addHandler(new Stdout());
@@ -32,7 +33,8 @@ $swoole = new \Swoole\Server('0.0.0.0', 8099);
 
 //协议一定要跟客户端请求对上
 $protocol = new TJSONProtocolFactory();
-// 二进制 TBinaryProtocolFactory
+$protocol = new TBinaryProtocolFactory();
+// 二进制 
 
 $server = new LSYS\Swoole\Thrift\Server\TSwooleServer($processor,$swoole,$protocol, $protocol);
 $server->config([

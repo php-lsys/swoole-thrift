@@ -32,7 +32,7 @@ class TSwooleSocket extends TTransport
      * @param bool   $persist      Whether to use a persistent socket
      * @param string $debugHandler Function to call for error logging
      */
-    public function __construct(string $config) {
+    public function __construct(string $config=null) {
         $client=\LSYS\Swoole\Coroutine\DI::get()->swoole_client($config);
         $this->handle_ = $client;
     }

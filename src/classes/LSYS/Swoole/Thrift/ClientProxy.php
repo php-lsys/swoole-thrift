@@ -13,22 +13,6 @@ use Thrift\Protocol\TBinaryProtocolAccelerated;
 use Thrift\Protocol\TProtocol;
 class ClientProxy{
     /**
-     * 创建LSYS\DI\MethodCallback的回调函数辅助方法
-     * DI示例:new \LSYS\DI\MethodCallback(ClientProxy::diMethod(self::$config,ProductClient::class))
-     * @param string $default_config_name 默认config名
-     * @param string|callable $client 客户端类名
-     * @return object 返回对应客户端代理实例
-     */
-    public static function diMethod(string $default_config_name,$client){
-        return function(ClientProxy $client_proxy=null,$config_name=null)use($client,$default_config_name){
-            $config=\LSYS\Config\DI::get()->config($config_name?$config_name:$default_config_name);
-            if ($client_proxy) {
-                return new static($config,$client_proxy->getProtocol()->getTransport(),$client);
-            }
-            return static::create($client, $config);
-        };
-    }
-    /**
      * 根据配置创建对应的客户端代理辅助方法
      * @param string|callable $client
      * @param Config $config

@@ -4,6 +4,7 @@ use DomeInformation\DomeNewsClient;
 use Thrift\Transport\TFramedTransport;
 use Thrift\Protocol\TJSONProtocol;
 use DomeInformation\DomeAdParam;
+use Thrift\Protocol\TBinaryProtocol;
 require __DIR__."/boot.php";
 
 
@@ -14,6 +15,7 @@ $transport = new TFramedTransport($socket);
 
 //协议要跟服务器对上
 $protocol = new TJSONProtocol($transport);
+$protocol = new TBinaryProtocol($transport);
 
 
 $client = new DomeNewsClient($protocol);

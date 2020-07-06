@@ -11,8 +11,13 @@ use Thrift\Exception\TApplicationException;
 use Thrift\Type\TMessageType;
 use LSYS\EventManager\Event;
 use LSYS\EventManager\EventObserver;
+use LSYS\Swoole\Thrift\Server\TSwooleServer;
 class ReceiveObserver implements EventObserver
 {
+    protected $swoole_server;
+    public function __construct(TSwooleServer $swoole_server){
+        $this->swoole_server=$swoole_server;
+    }
     public function eventNotify(Event $event)
     {
         $data=$event->data();
@@ -29,9 +34,9 @@ class ReceiveObserver implements EventObserver
         $transport->setHandle($fd);
         $transport->buffer = $data;
         $transport->server = $serv;
-        $inputProtocol = $this->subject->event()->swooleServer()->inputProtocolFactory()->getProtocol($transport);
-        $outputProtocol =$this->subject->event()->swooleServer()->outputProtocolFactory()->getProtocol($transport);
-        $processor=$this->subject->event()->swooleServer()->processor();
+        $inputProtocol = $this->swoole_server->inputProtocolFactory()->getProtocol($transport);
+        $outputProtocol =$this->swoole_server->outputProtocolFactory()->getProtocol($transport);
+        $processor=$this->swoole_server->processor();
         try {
             $processor->process($inputProtocol, $outputProtocol);
         } catch (\Exception $e) {

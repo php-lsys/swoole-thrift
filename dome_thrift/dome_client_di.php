@@ -1,8 +1,7 @@
 <?php
-use DomeInformation\DomeNewsClient;
-use LSYS\Swoole\Thrift\ClientProxy;
+require __DIR__."/boot.php";
 /**
- * @method DomeNewsClient|ClientProxy news(ClientProxy $client=null,$config=null)
+ * @method DomeNewsClient|ClientProxy news()
  */
 class MyClient extends \LSYS\DI{
     /**
@@ -15,7 +14,10 @@ class MyClient extends \LSYS\DI{
      */
     public static function get(){
         $di=parent::get();
-        !isset($di->news)&&$di->news(new \LSYS\DI\MethodCallback(ClientProxy::diMethod(self::$config,DomeNewsClient::class)));
+        !isset($di->news)&&$di->news(new \LSYS\DI\MethodCallback(function(){
+            $config=\LSYS\Config\DI::get()->config(self::$config);
+            return \LSYS\Swoole\Thrift\ClientProxy::create(DomeInformation\DomeNewsClient::class, $config);
+        }));
         return $di;
     }
 }
@@ -23,7 +25,7 @@ class MyClient extends \LSYS\DI{
 
 
 go(function(){
-    $client=MyClient::get()->product();
+    $client=MyClient::get()->news();
     $recv1 = $client->test("dddd111");
     print_r($recv1);
     //主动释放

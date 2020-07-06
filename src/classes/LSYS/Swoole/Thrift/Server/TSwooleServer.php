@@ -73,7 +73,7 @@ class TSwooleServer
             $this->outputProtocolFactory_ = $outputProtocolFactory;
             if(is_null($event_manager)) $event_manager=\LSYS\EventManager\DI::get()->eventManager();
             $this->eventManager_=$event_manager;
-            $event_manager->attach(new ReceiveObserver());
+            $event_manager->attach(new ReceiveObserver($this));
     }
     /**
      * get or set config

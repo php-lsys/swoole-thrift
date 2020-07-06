@@ -44,12 +44,14 @@ class DomeNewsHandler implements DomeNewsIf {
             'host' => '127.0.0.1',
             'port' => 3306,
             'user' => 'root',
-            'password' => '110',
+            'password' => '',
             'fetch_mode' 		=> 1,
             'database' => 'test',
         ];
         $mysql=new  \Swoole\Coroutine\MySQL();
-        $mysql->connect($config);
+        if(!$mysql->connect($config)){
+            return $mysql->connect_error;
+        }
         $test=addslashes($test);
         $res=$mysql->query("select sleep(1) as t,'{$test}' as b");
         return $res[0]['b'];
