@@ -6,7 +6,7 @@ class ThriftTableBuild extends \LSYS\Swoole\Thrift\Tools\TableThriftBuild{
         $this->setSaveDir(__DIR__."/thrift")
         ->setNamespace(["php Table"])
         ;
-        $this->_pool=\LSYS\Swoole\Coroutine\MySQLPool\DI::get()->swoole_mysql_pool();
+        $this->_pool=\LSYS\Swoole\Coroutine\DI::get()->swoole_mysql_pool();
         $this->_db=new \LSYS\Model\Database\Swoole\MYSQL($this->_pool);
     }
     public function listTables()

@@ -54,7 +54,7 @@ class TSwooleSocketPool extends TTransport
         string $node,
         $debugHandler=null
   ){
-        $this->pool_ = \LSYS\Swoole\Coroutine\ClientPool\DI::get()->swoole_client_pool($config);
+        $this->pool_ = \LSYS\Swoole\Coroutine\DI::get()->swoole_client_pool($config);
         $this->node_=$node;
         $this->debugHandler_ = $debugHandler ? $debugHandler : 'error_log';
   }
