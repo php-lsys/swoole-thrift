@@ -28,7 +28,7 @@ class DomeNewsHandler implements DomeNewsIf {
     public function test2($test)
     {
         //使用连接池查询数据库
-        $mysql=\LSYS\Swoole\Coroutine\MySQLPool\DI::get()->swoole_mysql_pool();
+        $mysql=\LSYS\Swoole\Coroutine\DI::get()->swoole_mysql_pool();
         $connect=$mysql->pop();
         $res=$mysql->query($connect, function()use($connect,$test){
             $test=addslashes($test);
