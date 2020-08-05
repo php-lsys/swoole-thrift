@@ -20,7 +20,7 @@ class ReceiveObserver implements EventObserver
     }
     public function eventNotify(Event $event)
     {
-        $data=$event->data();
+        $data=$event->getData();
         if(!is_array($data))return ;
         call_user_func_array([$this,'onReceive'], $data);
     }
